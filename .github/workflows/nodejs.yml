@@ -29,7 +29,9 @@ jobs:
       run: npm install
 
     - name: Build with Nextjs
-      run: npm run build
+      run: | 
+        npm run build
+        npm run export
     
     - name: Azure upload
       uses: azure/CLI@v1
@@ -37,4 +39,4 @@ jobs:
         azcliversion: 2.0.72
         inlineScript: |
           az storage blob delete-batch -s "\$web" --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
-          az storage blob upload-batch -d "\$web" -s public --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
+          az storage blob upload-batch -d "\$web" -s out --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
