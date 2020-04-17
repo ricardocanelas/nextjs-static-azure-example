@@ -1,6 +1,8 @@
 import Head from 'next/head'
+import Link from 'next/link'
+import fetch from 'isomorphic-unfetch'
 
-export default function Home() {
+const Home = props => {
   return (
     <div className="container">
       <Head>
@@ -18,33 +20,32 @@ export default function Home() {
         </p>
 
         <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          <Link href="/about">
+            <a className="card">
+              <h3>About &rarr;</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </a>
+          </Link>
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          <Link href="/contact">
+            <a className="card">
+              <h3>Contact &rarr;</h3>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            </a>
+          </Link>
 
-          <a
-            href="https://github.com/zeit/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://zeit.co/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with ZEIT Now.
-            </p>
-          </a>
+          <hr />
+        </div>
+        <div>
+          <ul>
+            {props.shows.map(show => (
+              <li key={show.id}>
+                <Link href="/show/[id]" as={`/show/${show.id}`}>
+                  <a>{show.name}</a>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </main>
 
@@ -202,3 +203,16 @@ export default function Home() {
     </div>
   )
 }
+
+Home.getInitialProps = async function() {
+  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
+  const data = await res.json()
+
+  console.log(`Show data fetched. Count: ${data.length}`)
+
+  return {
+    shows: data.map(entry => entry.show)
+  }
+}
+
+export default Home
